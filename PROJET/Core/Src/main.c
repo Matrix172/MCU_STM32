@@ -57,7 +57,10 @@ static void MX_TIM3_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
 /* USER CODE BEGIN PFP */
-void mode1(uint16_t GPIO_Pin);
+void B1();
+void B2();
+void B3();
+void B4();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -107,7 +110,6 @@ int main(void)
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
-		//if(BTNCarte_Pin) SI on appuie sur le bouton bleu on incrémente et si c'est + que 4 modes, on met à 1
 	}
 
 	/* USER CODE END 3 */
@@ -373,46 +375,116 @@ int _write(int file, char *ptr, int len)
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
-	if (BTNCarte_Pin == GPIO_PIN_SET){
-		if (mode < 4 ){
-			mode += 1;
-			printf("Mode if : %d\n",mode);
+	switch (GPIO_Pin){
+	case BTNCarte_Pin :
+		if (mode < 4){
+			mode ++;
+			printf("Mode : %d\n", mode);
 		}
 		else{
-			mode=1;
-			printf("Mode else : %d\n",mode);
+			mode = 1;
+			printf("Mode : %d\n", mode);
 		}
-	}
-
-	if (mode == 1){
-		mode1(GPIO_Pin);
-	}
-	else {
-		printf("Mode pas encore implémenté\n");
-	}
-}
-
-void mode1(uint16_t GPIO_Pin){
-	printf("Mode :%d\n",mode);
-	switch(GPIO_Pin){
+		break;
 
 	case BTN1_Pin:
 		printf("BTN1_Pin\n");
+		B1(mode);
 		break;
 
 	case BTN2_Pin:
 		printf("BTN2_Pin\n");
+		B2(mode);
 		break;
 
 	case BTN3_Pin:
 		printf("BTN3_Pin\n");
+		B3(mode);
 		break;
 
 	case BTN4_Pin:
 		printf("BTN4_Pin\n");
+		B4(mode);
 		break;
 
 	default :
+		break;
+	}
+}
+
+void B1(){
+	printf("B1, mode %d\n", mode);
+	switch(mode){
+	case 1:
+		printf("Action bouton 1 mode 1\n");
+		break;
+	case 2:
+		printf("Action bouton 1 mode 2\n");
+		break;
+	case 3:
+		printf("Action bouton 1 mode 3\n");
+		break;
+	case 4:
+		printf("Action bouton 1 mode 4\n");
+		break;
+	default:
+		break;
+	}
+}
+void B2(){
+	printf("B2, mode %d\n", mode);
+	switch(mode){
+	case 1:
+		printf("Action bouton 2 mode 1\n");
+		break;
+	case 2:
+		printf("Action bouton 2 mode 2\n");
+		break;
+	case 3:
+		printf("Action bouton 2 mode 3\n");
+		break;
+	case 4:
+		printf("Action bouton 2 mode 4\n");
+		break;
+	default:
+		break;
+	}
+}
+void B3(){
+	printf("B3, mode %d\n", mode);
+	switch(mode){
+	case 1:
+		printf("Action bouton 3 mode 1\n");
+		break;
+	case 2:
+		printf("Action bouton 3 mode 2\n");
+		break;
+	case 3:
+		printf("Action bouton 3 mode 3\n");
+		break;
+	case 4:
+		printf("Action bouton 3 mode 4\n");
+		break;
+	default:
+		break;
+	}
+}
+void B4(){
+	printf("B4, mode %d\n", mode);
+	switch(mode){
+	case 1:
+		printf("Action bouton 4 mode 1\n");
+		break;
+	case 2:
+		printf("Action bouton 4 mode 2\n");
+		break;
+	case 3:
+		printf("Action bouton 4 mode 3\n");
+		break;
+	case 4:
+		printf("Action bouton 4 mode 4\n");
+		break;
+	default:
 		break;
 	}
 }
