@@ -40,8 +40,6 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-SPI_HandleTypeDef hspi1;
-
 TIM_HandleTypeDef htim3;
 
 /* USER CODE BEGIN PV */
@@ -104,6 +102,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   }
+  printf("coucou");
   /* USER CODE END 3 */
 }
 
@@ -295,6 +294,16 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+int _write(int file, char *ptr, int len)
+{
+ int DataIdx;
+ for (DataIdx = 0; DataIdx < len; DataIdx++)
+ {
+ //__io_putchar(*ptr++);
+ ITM_SendChar(*ptr++);
+ }
+ return len;
+}
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 	switch(GPIO_Pin){
