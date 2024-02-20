@@ -61,6 +61,13 @@ int _write(int file, char *ptr, int len);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define BTNCarte_Pin GPIO_PIN_13
+#define BTNCarte_GPIO_Port GPIOC
+#define BTNCarte_EXTI_IRQn EXTI15_10_IRQn
+#define RV1_Pin GPIO_PIN_0
+#define RV1_GPIO_Port GPIOA
+#define RV2_Pin GPIO_PIN_1
+#define RV2_GPIO_Port GPIOA
 #define SPI_SCK_Pin GPIO_PIN_5
 #define SPI_SCK_GPIO_Port GPIOA
 #define SPI_MISO_Pin GPIO_PIN_6
