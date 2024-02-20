@@ -58,7 +58,7 @@
 //#include  <8051.h>                                    // microcontroller header file
 #include "main.h"
 #include "max7219_Yncrea2.h"                                  // MAX7219 header file
-SPI_HandleTypeDef hspi1;
+//SPI_HandleTypeDef hspi1;
 //need to be defined in main.h
 /*#define SPI_SCK_Pin
 #define SPI_SCK_GPIO_Port
