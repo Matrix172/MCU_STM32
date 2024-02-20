@@ -269,9 +269,12 @@ void MAX7219_Clear (void)
 * Returns    : none
 *********************************************************************************************************
 */
-void MAX7219_DisplayChar (char digit, char character)
-{
-  MAX7219_Write(digit, MAX7219_LookupCode(character));
+void MAX7219_DisplayChar (char digit, char character, char dp) {
+    if (dp) {
+        MAX7219_Write(digit, MAX7219_LookupCode(character) | 0x80); // Active le bit 7 pour le point décimal
+    } else {
+        MAX7219_Write(digit, MAX7219_LookupCode(character)); // Pas de point décimal
+    }
 }
 
 

@@ -61,11 +61,16 @@ void B1();
 void B2();
 void B3();
 void B4();
+void initialisation();
+void affichemod();
+void switchmod();
+void chronometre();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 int mode = 1;
+int stopchrono = 1;
 /* USER CODE END 0 */
 
 /**
@@ -110,6 +115,7 @@ int main(void)
 		/* USER CODE END WHILE */
 
 		/* USER CODE BEGIN 3 */
+		fonctionmod();
 	}
 
 	/* USER CODE END 3 */
@@ -329,9 +335,15 @@ static void MX_GPIO_Init(void)
 	/*Configure GPIO pin Output Level */
 	HAL_GPIO_WritePin(SPI_CS_GPIO_Port, SPI_CS_Pin, GPIO_PIN_RESET);
 
-	/*Configure GPIO pins : BTNCarte_Pin BTN4_Pin BTN3_Pin */
-	GPIO_InitStruct.Pin = BTNCarte_Pin|BTN4_Pin|BTN3_Pin;
+	/*Configure GPIO pin : BTNCarte_Pin */
+	GPIO_InitStruct.Pin = BTNCarte_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	HAL_GPIO_Init(BTNCarte_GPIO_Port, &GPIO_InitStruct);
+
+	/*Configure GPIO pins : BTN4_Pin BTN3_Pin */
+	GPIO_InitStruct.Pin = BTN4_Pin|BTN3_Pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
@@ -344,14 +356,11 @@ static void MX_GPIO_Init(void)
 
 	/*Configure GPIO pins : BTN1_Pin BTN2_Pin */
 	GPIO_InitStruct.Pin = BTN1_Pin|BTN2_Pin;
-	GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+	GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
 	/* EXTI interrupt init*/
-	HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
-	HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
-
 	HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
 	HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
 
@@ -373,6 +382,140 @@ int _write(int file, char *ptr, int len)
 }
 
 
+
+
+
+void initialisation(uint32_t MyDelay) {
+	MAX7219_Clear();
+	MAX7219_Init();
+	MAX7219_DisplayChar(1,'1', 0); // Pas de point décimal
+	MAX7219_DisplayChar(2,'2', 1); // Avec point décimal
+	MAX7219_DisplayChar(3,'3', 0); // Pas de point décimal
+	MAX7219_DisplayChar(4,'4', 0); // Pas de point décimal
+	HAL_Delay(MyDelay);
+	MAX7219_Clear();
+}
+
+
+
+
+
+
+void affichemod(){
+	MAX7219_Clear();
+	MAX7219_Init();
+	MAX7219_DisplayChar(1,'S', 0); // Pas de point décimal
+	MAX7219_DisplayChar(2,'E', 0); // Avec point décimal
+	MAX7219_DisplayChar(3,'T', 1); // Pas de point décimal
+	switchmode();
+
+}
+
+
+
+
+
+
+void fonctionmod(){
+	switch(mode){
+	case 1:
+		if (HAL_GPIO_ReadPin(BTN1_GPIO_Port, BTN1_Pin) == GPIO_PIN_RESET) {
+			printf("coucou les loulous\n");
+			chronometre();
+		}
+		/*
+		if (HAL_GPIO_ReadPin(BTN2_GPIO_Port, BTN2_Pin) == GPIO_PIN_RESET){
+			printf("bouton ok\n");
+			arreter_chronometre();
+		}
+*/
+		break;
+	}
+
+}
+
+
+
+
+
+
+
+void chronometre() {
+	MAX7219_Clear();
+	MAX7219_Init();
+	stopchrono = 1 ;
+
+	uint32_t start_time = HAL_GetTick(); // Temps de départ en millisecondes
+
+	uint32_t minutes = 0; // Initialisation des minutes à 0
+	uint32_t seconds = 0; // Initialisation des secondes à 0
+	while ((minutes < 99)&&(stopchrono == 1)) { // Tant que moins de 99 minutes se sont écoulées
+		uint32_t elapsed_time = HAL_GetTick() - start_time; // Temps écoulé depuis le début du chronomètre
+
+		// Calculez les minutes et les secondes
+		minutes = (elapsed_time / (1000 * 60)) % 100; // Limiter les minutes à 99
+		seconds = (elapsed_time / 1000) % 60;
+
+		// Affichez les valeurs calculées sur les afficheurs 7 segments
+		MAX7219_DisplayChar(1, minutes / 10 + '0', 0); // Affiche les dizaines de minutes
+		MAX7219_DisplayChar(2, minutes % 10 + '0', 1); // Affiche les minutes
+		MAX7219_DisplayChar(3, seconds / 10 + '0', 0); // Affiche les dizaines de secondes
+		MAX7219_DisplayChar(4, seconds % 10 + '0', 0); // Affiche les secondes
+
+		HAL_Delay(1000); // Attendez une seconde avant de mettre à jour l'affichage
+
+
+
+		MAX7219_Clear(); // Effacez l'affichage une fois que 99 minutes se sont écoulées
+		if (HAL_GPIO_ReadPin(BTN2_GPIO_Port, BTN2_Pin) == GPIO_PIN_RESET){
+			arreter_chronometre();
+		}
+	}
+}
+
+
+
+
+
+
+
+void arreter_chronometre() {
+	// Arrêter la mise à jour de l'affichage
+	stopchrono = 0;
+	printf("stopchrono = %d\n",stopchrono);
+	MAX7219_DisplayChar(1, '0', 0);
+	MAX7219_DisplayChar(2, '0', 1);
+	MAX7219_DisplayChar(3, '0', 0);
+	MAX7219_DisplayChar(4, '0', 0);
+
+}
+
+
+
+
+
+
+void switchmode(){
+	switch(mode){
+	case 1:
+		MAX7219_DisplayChar(4,'1', 0); // Pas de point décimal
+		break;
+	case 2:
+		MAX7219_DisplayChar(4,'2', 0);
+		break;
+	case 3:
+		MAX7219_DisplayChar(4,'3', 0); // Pas de point décimal
+		break;
+	case 4:
+		MAX7219_DisplayChar(4,'4', 0);
+		break;
+	}
+}
+
+
+
+
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 	switch (GPIO_Pin){
@@ -385,109 +528,14 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			mode = 1;
 			printf("Mode : %d\n", mode);
 		}
-		break;
+		affichemod();
 
-	case BTN1_Pin:
-		printf("BTN1_Pin\n");
-		B1(mode);
-		break;
-
-	case BTN2_Pin:
-		printf("BTN2_Pin\n");
-		B2(mode);
-		break;
-
-	case BTN3_Pin:
-		printf("BTN3_Pin\n");
-		B3(mode);
-		break;
-
-	case BTN4_Pin:
-		printf("BTN4_Pin\n");
-		B4(mode);
-		break;
-
-	default :
 		break;
 	}
 }
 
-void B1(){
-	printf("B1, mode %d\n", mode);
-	switch(mode){
-	case 1:
-		printf("Action bouton 1 mode 1\n");
-		break;
-	case 2:
-		printf("Action bouton 1 mode 2\n");
-		break;
-	case 3:
-		printf("Action bouton 1 mode 3\n");
-		break;
-	case 4:
-		printf("Action bouton 1 mode 4\n");
-		break;
-	default:
-		break;
-	}
-}
-void B2(){
-	printf("B2, mode %d\n", mode);
-	switch(mode){
-	case 1:
-		printf("Action bouton 2 mode 1\n");
-		break;
-	case 2:
-		printf("Action bouton 2 mode 2\n");
-		break;
-	case 3:
-		printf("Action bouton 2 mode 3\n");
-		break;
-	case 4:
-		printf("Action bouton 2 mode 4\n");
-		break;
-	default:
-		break;
-	}
-}
-void B3(){
-	printf("B3, mode %d\n", mode);
-	switch(mode){
-	case 1:
-		printf("Action bouton 3 mode 1\n");
-		break;
-	case 2:
-		printf("Action bouton 3 mode 2\n");
-		break;
-	case 3:
-		printf("Action bouton 3 mode 3\n");
-		break;
-	case 4:
-		printf("Action bouton 3 mode 4\n");
-		break;
-	default:
-		break;
-	}
-}
-void B4(){
-	printf("B4, mode %d\n", mode);
-	switch(mode){
-	case 1:
-		printf("Action bouton 4 mode 1\n");
-		break;
-	case 2:
-		printf("Action bouton 4 mode 2\n");
-		break;
-	case 3:
-		printf("Action bouton 4 mode 3\n");
-		break;
-	case 4:
-		printf("Action bouton 4 mode 4\n");
-		break;
-	default:
-		break;
-	}
-}
+
+
 /* USER CODE END 4 */
 
 /**
