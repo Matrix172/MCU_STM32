@@ -1,15 +1,13 @@
 #MicroXplorer Configuration settings - do not modify
-ADC.Channel-0\#ChannelRegularConversion=ADC_CHANNEL_0
-ADC.Channel-2\#ChannelRegularConversion=ADC_CHANNEL_1
-ADC.EnableAnalogWatchDog=true
-ADC.IPParameters=Rank-0\#ChannelRegularConversion,Channel-0\#ChannelRegularConversion,SamplingTime-0\#ChannelRegularConversion,NbrOfConversionFlag,EnableAnalogWatchDog,NbrOfConversion,WatchdogMode,Rank-2\#ChannelRegularConversion,Channel-2\#ChannelRegularConversion,SamplingTime-2\#ChannelRegularConversion
+ADC.Channel-3\#ChannelRegularConversion=ADC_CHANNEL_0
+ADC.Channel-4\#ChannelRegularConversion=ADC_CHANNEL_1
+ADC.IPParameters=Rank-3\#ChannelRegularConversion,Channel-3\#ChannelRegularConversion,SamplingTime-3\#ChannelRegularConversion,NbrOfConversionFlag,NbrOfConversion,Rank-4\#ChannelRegularConversion,Channel-4\#ChannelRegularConversion,SamplingTime-4\#ChannelRegularConversion
 ADC.NbrOfConversion=2
 ADC.NbrOfConversionFlag=1
-ADC.Rank-0\#ChannelRegularConversion=1
-ADC.Rank-2\#ChannelRegularConversion=2
-ADC.SamplingTime-0\#ChannelRegularConversion=ADC_SAMPLETIME_384CYCLES
-ADC.SamplingTime-2\#ChannelRegularConversion=ADC_SAMPLETIME_384CYCLES
-ADC.WatchdogMode=ADC_ANALOGWATCHDOG_ALL_REG
+ADC.Rank-3\#ChannelRegularConversion=1
+ADC.Rank-4\#ChannelRegularConversion=2
+ADC.SamplingTime-3\#ChannelRegularConversion=ADC_SAMPLETIME_384CYCLES
+ADC.SamplingTime-4\#ChannelRegularConversion=ADC_SAMPLETIME_384CYCLES
 CAD.formats=
 CAD.pinconfig=
 CAD.provider=
