@@ -1,9 +1,15 @@
 #MicroXplorer Configuration settings - do not modify
 ADC.Channel-0\#ChannelRegularConversion=ADC_CHANNEL_0
-ADC.IPParameters=Rank-0\#ChannelRegularConversion,Channel-0\#ChannelRegularConversion,SamplingTime-0\#ChannelRegularConversion,NbrOfConversionFlag
+ADC.Channel-2\#ChannelRegularConversion=ADC_CHANNEL_1
+ADC.EnableAnalogWatchDog=true
+ADC.IPParameters=Rank-0\#ChannelRegularConversion,Channel-0\#ChannelRegularConversion,SamplingTime-0\#ChannelRegularConversion,NbrOfConversionFlag,EnableAnalogWatchDog,NbrOfConversion,WatchdogMode,Rank-2\#ChannelRegularConversion,Channel-2\#ChannelRegularConversion,SamplingTime-2\#ChannelRegularConversion
+ADC.NbrOfConversion=2
 ADC.NbrOfConversionFlag=1
 ADC.Rank-0\#ChannelRegularConversion=1
+ADC.Rank-2\#ChannelRegularConversion=2
 ADC.SamplingTime-0\#ChannelRegularConversion=ADC_SAMPLETIME_384CYCLES
+ADC.SamplingTime-2\#ChannelRegularConversion=ADC_SAMPLETIME_384CYCLES
+ADC.WatchdogMode=ADC_ANALOGWATCHDOG_ALL_REG
 CAD.formats=
 CAD.pinconfig=
 CAD.provider=
