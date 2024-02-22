@@ -57,15 +57,26 @@ static void MX_TIM3_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_ADC_Init(void);
 /* USER CODE BEGIN PFP */
-void initialisation();
 void affichemod();
+void affiche_num();
+void affiche_clear();
 void fonctionmod();
+
 void chronometre();
 void arreter_chronometre();
 void switchmode();
 
+void adcsecondes();
+void adcminutes();
 void adcfunction();
-void affiche_num();
+void decrementunites();
+void decrementdizaines();
+void decrementminutes();
+void decrementdizainesminutes();
+
+void BUZZ();
+void MOT();
+
 void minuteur();
 /* USER CODE END PFP */
 
@@ -86,7 +97,7 @@ int dizainesminutes = 0;
 int minutes =0;
 
 
-int valide = 0; // Validation en appuyant sur le bouton2
+int valide = 0;
 int adccheck =0;
 /* USER CODE END 0 */
 
@@ -336,6 +347,11 @@ static void MX_TIM3_Init(void)
 	{
 		Error_Handler();
 	}
+	sConfigOC.Pulse = 500;
+	if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_2) != HAL_OK)
+	{
+		Error_Handler();
+	}
 	/* USER CODE BEGIN TIM3_Init 2 */
 
 	/* USER CODE END TIM3_Init 2 */
@@ -417,6 +433,30 @@ void affichemod(){
 	MAX7219_DisplayChar(2,'E', 0); // Avec point décimal
 	MAX7219_DisplayChar(3,'T', 1); // Pas de point décimal
 	switchmode();
+}
+
+void affiche_num(){
+	MAX7219_Clear();
+	MAX7219_Init();
+
+	dizainesminutes = valeurMin / 10;
+	minutes = valeurMin % 10;
+	dizaines = valeur / 10;
+	unites = valeur % 10;
+
+	MAX7219_DisplayChar(1, dizainesminutes + '0', 0);
+	MAX7219_DisplayChar(2, minutes + '0', 1);
+	MAX7219_DisplayChar(3, dizaines + '0', 0);
+	MAX7219_DisplayChar(4, unites + '0', 0);
+}
+
+void affiche_clear(){
+	MAX7219_Clear();
+	MAX7219_Init();
+	MAX7219_DisplayChar(1, dizainesminutes + '0', 0);
+	MAX7219_DisplayChar(2, minutes + '0', 1);
+	MAX7219_DisplayChar(3, dizaines + '0', 0);
+	MAX7219_DisplayChar(4, unites + '0', 0);
 
 }
 
@@ -429,25 +469,37 @@ void fonctionmod(){
 	switch(mode){
 	case 1:
 		if (HAL_GPIO_ReadPin(BTN1_GPIO_Port, BTN1_Pin) == GPIO_PIN_RESET) {
-			printf("Appui sur le bouton 1 \n");
+			printf("Lancement du chronometre \n");
 			chronometre();
 		}
 		break;
 
 	case 2:
-		if (valide == 0){
-			adcfunction();
-			affiche_num();
-		}
-		if (HAL_GPIO_ReadPin(BTN2_GPIO_Port, BTN2_Pin) == GPIO_PIN_RESET){
-			HAL_ADC_Stop(&hadc);
-			adccheck ++;
-			printf("Temps validé !\n");
-			if (adccheck == 2){
-				valide = 1;
-				minuteur();
+		HAL_Delay(200);
+		if (mode == 2){
+			if (valide == 0){
+				//Faire un getTickCount pour eviter de spam le terminal.
+				printf("Parametrage du minuteur\n");
+				adcfunction();
+				affiche_num();
+			}
+			if (HAL_GPIO_ReadPin(BTN1_GPIO_Port, BTN1_Pin) == GPIO_PIN_RESET){
+				HAL_ADC_Stop(&hadc);
+				adccheck ++;
+				printf("Temps validé !\n");
+				if (adccheck == 2){
+					valide = 1;
+					printf("Lancement du minuteur\n");
+					minuteur();
+				}
 			}
 		}
+	case 3:
+		break;
+	case 4:
+		break;
+	default :
+		break;
 
 		break;
 	}
@@ -484,7 +536,7 @@ void chronometre() {
 
 		HAL_Delay(1000); // Attendez une seconde avant de mettre à jour l'affichage
 
-		MAX7219_Clear(); // Effacez l'affichage une fois que 99 minutes se sont écoulées
+		//MAX7219_Clear(); // Effacez l'affichage une fois que 99 minutes se sont écoulées
 		if (HAL_GPIO_ReadPin(BTN2_GPIO_Port, BTN2_Pin) == GPIO_PIN_RESET){
 			arreter_chronometre();
 		}
@@ -498,20 +550,16 @@ void chronometre() {
 
 
 void arreter_chronometre() {
-	// Arrêter la mise à jour de l'affichage
+	printf("Arret du chronometre\n");
 	stopchrono = 0;
-	printf("stopchrono = %d\n",stopchrono);
-	MAX7219_DisplayChar(1, '0', 0);
-	MAX7219_DisplayChar(2, '0', 1);
-	MAX7219_DisplayChar(3, '0', 0);
-	MAX7219_DisplayChar(4, '0', 0);
+	// Faire cela uniquement quand on veux reset sinon on rate le temps qu'on a fait.
+	//MAX7219_DisplayChar(1, '0', 0);
+	//MAX7219_DisplayChar(2, '0', 1);
+	//MAX7219_DisplayChar(3, '0', 0);
+	//MAX7219_DisplayChar(4, '0', 0);
+	// Maintenant c'est dans la fonction affiche_clear();
 
 }
-
-
-
-
-
 
 void switchmode(){
 	switch(mode){
@@ -542,9 +590,9 @@ void adcsecondes(){
 	valeur = analogValue / 68;
 
 	HAL_ADC_Stop(&hadc);
-	printf("ADC Value= %d\n", analogValue);
-	printf("Valeur 60 : %d\n",valeur);
-	HAL_Delay(100);
+	//printf("ADC Value= %d\n", analogValue);
+	//printf("Valeur 60 : %d\n",valeur);
+	HAL_Delay(50);
 }
 
 void adcminutes(){
@@ -559,34 +607,18 @@ void adcminutes(){
 	valeurMin = analogValueMin / 41;
 
 	HAL_ADC_Stop(&hadc);
-	printf("ADC ValueMin= %d\n", analogValueMin);
-	printf("Valeur 100 : %d\n",valeurMin);
-	HAL_Delay(100);
+	//printf("ADC ValueMin= %d\n", analogValueMin);
+	//printf("Valeur 100 : %d\n",valeurMin);
+	HAL_Delay(50);
 }
 
 void adcfunction(){
-	ADC_ChannelConfTypeDef sConfig = {0}; // Réinitialisation de la structure sConfig
 	if (adccheck == 0){
 		adcsecondes();
 	}
 	else if (adccheck == 1){
 		adcminutes();
 	}
-}
-
-void affiche_num(){
-	MAX7219_Clear();
-	MAX7219_Init();
-
-	dizainesminutes = valeurMin / 10;
-	minutes = valeurMin % 10;
-	dizaines = valeur / 10;
-	unites = valeur % 10;
-
-	MAX7219_DisplayChar(1, dizainesminutes + '0', 0);
-	MAX7219_DisplayChar(2, minutes + '0', 1);
-	MAX7219_DisplayChar(3, dizaines + '0', 0);
-	MAX7219_DisplayChar(4, unites + '0', 0);
 }
 
 void decrementunites(){
@@ -606,15 +638,77 @@ void decrementdizaines(){
 		MAX7219_DisplayChar(4, unites + '0', 0);
 		HAL_Delay(1000);
 		decrementunites();
-
 	}
 }
 
-void minuteur(){
-	while ((dizaines != 0) && (unites !=0)){
+void decrementminutes(){
+	while(minutes > 0){
+		decrementunites();
+		decrementdizaines();
+		minutes --;
+		dizaines = 6;
+		MAX7219_DisplayChar(2, minutes + '0', 1);
+		MAX7219_DisplayChar(3, dizaines + '0', 0);
+		decrementunites();
 		decrementdizaines();
 	}
+}
+
+void decrementdizainesminutes(){
+	while(dizainesminutes > 0){
+		decrementunites();
+		decrementdizaines();
+		decrementminutes();
+		dizainesminutes --;
+		minutes = 10;
+		MAX7219_DisplayChar(1, dizainesminutes + '0', 0);
+		MAX7219_DisplayChar(2, minutes + '0', 1);
+		decrementunites();
+		decrementdizaines();
+		decrementminutes();
+	}
+}
+
+void BUZZ(int i){
+	HAL_TIM_Base_Start(&htim3);
+	for (int j=0; j<i;j++){
+		HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+		HAL_Delay(2000);
+		HAL_TIM_PWM_Stop(&htim3,TIM_CHANNEL_2);
+	}
+}
+
+void MOT(int i){
+	HAL_TIM_Base_Start(&htim3);
+	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);
+	for (int j=0; j<i;j++){
+		htim3.Instance->CCR1 = 200;
+		HAL_Delay(1000);
+		htim3.Instance->CCR1 = 50;
+	}
+	HAL_TIM_PWM_Stop(&htim3,TIM_CHANNEL_1);
+}
+
+void minuteur(){
+	while ((dizainesminutes != 0) || (minutes != 0) || (dizaines != 0) || (unites !=0 )){
+
+		if (dizainesminutes != 0) {decrementdizainesminutes();}
+		if (minutes !=0) {decrementminutes();}
+		if (dizaines !=0) {decrementdizaines();}
+		if (unites !=0) {decrementunites();}
+	}
+	BUZZ(5);
+	//MOT(5);
+
+	// Faut tout reset apres mais l'affichage marche pas
+	unites = 0;
+	dizaines = 0;
+	minutes = 0;
+	dizainesminutes = 0;
+
+	adccheck = 0;
 	valide = 0;
+	affiche_num();
 }
 
 
@@ -632,8 +726,6 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			printf("Mode : %d\n", mode);
 		}
 		affichemod();
-
-
 		break;
 	}
 }
