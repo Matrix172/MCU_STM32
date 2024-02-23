@@ -33,6 +33,7 @@ extern "C" {
 /* USER CODE BEGIN Includes */
 #include "stdio.h"
 #include "stdlib.h"
+#include <string.h>
 extern SPI_HandleTypeDef hspi1;
 /* USER CODE END Includes */
 
