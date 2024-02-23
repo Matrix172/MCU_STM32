@@ -76,6 +76,10 @@ int _write(int file, char *ptr, int len);
 #define SPI_MOSI_GPIO_Port GPIOA
 #define BTN4_Pin GPIO_PIN_5
 #define BTN4_GPIO_Port GPIOC
+#define L0_Pin GPIO_PIN_1
+#define L0_GPIO_Port GPIOB
+#define L1_Pin GPIO_PIN_2
+#define L1_GPIO_Port GPIOB
 #define BTN3_Pin GPIO_PIN_6
 #define BTN3_GPIO_Port GPIOC
 #define BUZZ_Pin GPIO_PIN_7
