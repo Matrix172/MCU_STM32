@@ -167,6 +167,7 @@ int main(void)
 	{
 		/* USER CODE END WHILE */
 
+
 		/* USER CODE BEGIN 3 */
 		fonctionmod();
 
@@ -644,9 +645,21 @@ void boucle_affiche() {
 	HAL_Delay(2000);
 
 }
+void dodo(){
+	printf("c'est ok bg\n");
+	HAL_SuspendTick();
+	HAL_PWR_EnterSLEEPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);;
+}
 
+void reveil(){
+	HAL_ResumeTick();
+	printf("Fini de rompiche\n");
+}
 
 void fonctionmod(){
+	if (HAL_GPIO_ReadPin(BTN3_GPIO_Port, BTN3_Pin) == GPIO_PIN_RESET){
+		dodo();
+	}
 	switch(mode){
 	case 1:
 		if (HAL_GPIO_ReadPin(BTN1_GPIO_Port, BTN1_Pin) == GPIO_PIN_RESET) {
@@ -1012,6 +1025,12 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 			printf("Mode : %d\n", mode);
 		}
 		affichemod();
+		break;
+
+	case BTN4_Pin:
+		reveil();
+		break;
+	default :
 		break;
 	}
 }
