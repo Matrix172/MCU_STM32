@@ -503,6 +503,23 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+typedef struct {
+	const char *acronyme;
+	int8_t decalage_horaire; // Décalage horaire par rapport à UTC en heures
+} FuseauHoraire;
+
+// Tableau des fuseaux horaires pour différentes villes
+const FuseauHoraire fuseaux_horaires[] = {
+		{"LA", -9},  // Los Angeles
+		{"NYC", -6},  // New York
+		{"LON", -1},   // Londres
+		{"PAR", 0},   // Paris
+		{"TKY", 8}    // Tokyo
+};
+//afficher_heure(fuseaux_horaires[i].acronyme, fuseaux_horaires[i].decalage_horaire);
+
+
 int _write(int file, char *ptr, int len)
 {
 	int DataIdx;
