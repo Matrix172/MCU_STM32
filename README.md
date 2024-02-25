@@ -36,4 +36,4 @@ Utilisation d'une carte STM32 L152RETx, projet MCU
   Attention : Le module RTC est fonctionnel mais n'est pas relié à un module permettant de récupérer l'heure en temps réel.
   Par conséquent, l'heure est à changer dans le .ioc avant de téléverser le code dans le MCU. Les heures du mode 4 fuseaux horaires dépendent donc de cette heure selectionnée au préalable.
 
-  Low Power Mode : Pour le moment, le code permet lors d'un appui sur le bouton 3 de mettre le MCU en mode sleep. La solution de réveil n'est quant à elle non fonctionnelle. Le bouton de reset peut cependant réveiller le MCU (l'heure de l'ioc redeviendra alors l'heure courante.
+  Low Power Mode : Pour le moment, le code permet lors d'un appui sur le bouton 3 de mettre le MCU en mode sleep. La solution de réveil n'est quant à elle non fonctionnelle. Le bouton de reset peut cependant réveiller le MCU l'heure de l'ioc redeviendra alors l'heure courante. (La fonctionnalité d'entrée en mode sleep dans la fonction 'fonctionmod' est commentée).

@@ -643,23 +643,26 @@ void boucle_affiche() {
 	affiche_fuseau_horaire_et_heure();
 	current_index = (current_index + 1) % (sizeof(fuseaux_horaires) / sizeof(fuseaux_horaires[0]));
 	HAL_Delay(2000);
-
 }
+
 void dodo(){
-	printf("c'est ok bg\n");
+	printf("Entrée en mode SLEEP\n");
 	HAL_SuspendTick();
 	HAL_PWR_EnterSLEEPMode(PWR_LOWPOWERREGULATOR_ON, PWR_STOPENTRY_WFI);;
 }
 
 void reveil(){
 	HAL_ResumeTick();
-	printf("Fini de rompiche\n");
+	printf("Sortie du mode SLEEP\n");
 }
 
 void fonctionmod(){
+	/*
 	if (HAL_GPIO_ReadPin(BTN3_GPIO_Port, BTN3_Pin) == GPIO_PIN_RESET){
 		dodo();
 	}
+	*/
+
 	switch(mode){
 	case 1:
 		if (HAL_GPIO_ReadPin(BTN1_GPIO_Port, BTN1_Pin) == GPIO_PIN_RESET) {
@@ -728,6 +731,7 @@ void fonctionmod(){
 		}
 
 		break;
+
 	default :
 		break;
 	}
@@ -763,12 +767,6 @@ void chronometre() {
 		}
 	}
 }
-
-
-
-
-
-
 
 void arreter_chronometre() {
 	printf("Arret du chronometre\n");
@@ -947,7 +945,6 @@ void minuteur(){
 	}
 	BUZZ(5);
 
-	// Faut tout reset apres mais l'affichage marche pas
 	unites = 0;
 	dizaines = 0;
 	minutes = 0;
@@ -1006,8 +1003,6 @@ void checkhorloge(){
 		moteur = 0;
 		affiche_clear();
 		HAL_GPIO_WritePin(L0_GPIO_Port, L0_Pin, GPIO_PIN_RESET);
-
-
 	}
 }
 
