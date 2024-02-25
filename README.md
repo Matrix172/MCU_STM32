@@ -1,6 +1,6 @@
 # MCU_STM32
 
-Utilisation d'une carte STM32 L152RETx, projet MCU
+Utilisation d'une carte STM32 L152RETx, logiciel STM32CUBE IDE dans le cadre d'un projet MCU
 
 ## Contraintes et exigeances : 
 - Utiliser un protocole de communication.
